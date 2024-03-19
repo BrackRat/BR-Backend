@@ -1,8 +1,7 @@
 use actix_web::{HttpResponse, Responder};
 use serde::Serialize;
 
-#[warn(dead_code)]
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub enum ResponseStatus {
     Success,
     BadRequest,
@@ -10,10 +9,7 @@ pub enum ResponseStatus {
     InternalServerError,
 }
 
-pub fn generate_response<T>(status: ResponseStatus, data: Option<T>, custom_msg: Option<&str>) -> impl Responder
-    where
-        T: Serialize,
-{
+pub fn generate_response<T>(status: ResponseStatus, data: Option<T>, custom_msg: Option<&str>) -> impl Responder where T: Serialize {
     let default_msg = match status {
         ResponseStatus::Success => "OK",
         ResponseStatus::BadRequest => "Bad Request",
