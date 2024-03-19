@@ -14,6 +14,8 @@ pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, na
         return None;
     }
 
+    // ToDo Password hash
+
     let user = client
         .user()
         .create(

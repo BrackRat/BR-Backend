@@ -15,4 +15,4 @@ serde_json = "1.0.114"
 serde = { version = "1.0.197", features = ["derive"] }
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.11" }
 chrono = "0.4.35"
-uuid = { version = "1.7.0", features = ["v4"] }
+bcrypt = "0.15"
