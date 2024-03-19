@@ -16,3 +16,4 @@ serde = { version = "1.0.197", features = ["derive"] }
 prisma-client-rust = { git = "https://github.com/Brendonovich/prisma-client-rust", tag = "0.6.11" }
 chrono = "0.4.35"
 argon2 = "0.5.3"
+jsonwebtoken = "9"

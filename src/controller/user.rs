@@ -3,7 +3,7 @@ use crate::db::user;
 use crate::{utils};
 
 use crate::common::hash_password::*;
-use crate::db::user::Data;
+use crate::common::jwt::generate_jwt;
 
 
 pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<user::Data> {
@@ -18,7 +18,6 @@ pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, na
         return None;
     }
 
-    // ToDo Password hash
     let hashed_password = hash_password(&password);
 
     return match hashed_password {
@@ -42,7 +41,7 @@ pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, na
     };
 }
 
-pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<user::Data> {
+pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<String> {
     let user = client
         .user()
         .find_first(vec![user::name::equals(name.clone())])
@@ -56,7 +55,7 @@ pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name:
         }
         Some(user) => {
             if verify_password(password.as_str(), user.password.as_str()) {
-                Some(user)
+                Some(generate_jwt(user.name))
             } else {
                 None
             }

@@ -1,5 +1,5 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use serde::{Serialize, Deserialize};
+// use serde::{Serialize, Deserialize};
 use serde_json;
 
 
@@ -16,6 +16,7 @@ mod common;
 use common::response::generate_response;
 use common::response::ResponseStatus;
 use common::request;
+
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -44,10 +45,10 @@ async fn user_register(client: web::Data<PrismaClient>, body: web::Json<request:
 async fn user_login(client: web::Data<PrismaClient>, body: web::Json<request::UserLoginReq>) -> impl Responder {
     let result = controller::user::login_user(client, body.name.clone(), body.password.clone()).await;
     match result {
-        Some(user) => {
+        Some(token) => {
             generate_response(ResponseStatus::Success, Some(serde_json::json!(
                 {
-                    "name": user.name
+                    "token": token
                 }
             )), Some("success"))
         }
@@ -71,7 +72,6 @@ async fn main() -> std::io::Result<()> {
             .service(hello)
             .service(user_login)
             .service(user_register)
-        // .service(update)
     })
         .bind((ip, port))?
         .run()
