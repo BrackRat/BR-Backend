@@ -4,6 +4,7 @@ use crate::{utils};
 
 use crate::common::hash_password::*;
 use crate::common::jwt::generate_jwt;
+use crate::db::user::UniqueWhereParam;
 
 
 pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<user::Data> {
@@ -60,5 +61,33 @@ pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name:
                 None
             }
         }
-    }
+    };
+}
+
+pub(crate) async fn change_password(client: web::Data<crate::db::PrismaClient>, name: String, old_password: String, new_password: String) -> bool {
+    let user = client
+        .user()
+        .find_first(vec![user::name::equals(name.clone())])
+        .exec()
+        .await
+        .unwrap();
+
+    return match user {
+        None => {
+            false
+        }
+        Some(user) => {
+            if verify_password(old_password.as_str(), user.password.as_str()) {
+                let hashed_password = hash_password(&new_password);
+                client
+                    .user()
+                    .update(UniqueWhereParam::IdEquals(user.id), vec![user::password::set(hashed_password.unwrap())])
+                    .exec()
+                    .await
+                    .unwrap();
+                return true
+            }
+            return false
+        }
+    };
 }
