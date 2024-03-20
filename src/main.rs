@@ -1,4 +1,4 @@
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 // use serde::{Serialize, Deserialize};
 use serde_json;
 use actix_web::middleware::Logger;
@@ -14,11 +14,8 @@ use db::*;
 mod utils;
 mod controller;
 mod common;
-
-use common::response::generate_response;
-use common::response::ResponseStatus;
-use common::request;
-use crate::common::jwt::verify_jwt;
+mod routes;
+use routes::user::*;
 
 
 #[get("/")]
@@ -28,58 +25,6 @@ async fn hello() -> impl Responder {
         "msg": "BR COMMON BACKEND"
     });
     HttpResponse::Ok().json(response)
-}
-
-
-#[post("/register")]
-async fn user_register(client: web::Data<PrismaClient>, body: web::Json<request::UserRegisterReq>) -> impl Responder {
-    let result = controller::user::register_user(client, body.name.clone(), body.password.clone()).await;
-    match result {
-        Some(user) => {
-            generate_response(ResponseStatus::Success, Some(serde_json::json!(
-                {
-                    "id": user.id
-                }
-            )), None)
-        }
-        None => {
-            generate_response(ResponseStatus::BadRequest, None, Some("Username already exists"))
-        }
-    }
-}
-
-#[post("/login")]
-async fn user_login(client: web::Data<PrismaClient>, body: web::Json<request::UserLoginReq>) -> impl Responder {
-    let result = controller::user::login_user(client, body.name.clone(), body.password.clone()).await;
-    match result {
-        Some(token) => {
-            generate_response(ResponseStatus::Success, Some(serde_json::json!(
-                {
-                    "token": token
-                }
-            )), None)
-        }
-        None => {
-            generate_response(ResponseStatus::BadRequest, None, Some("Username or Password Wrong"))
-        }
-    }
-}
-
-#[post("/change_password")]
-async fn user_change_password(client: web::Data<PrismaClient>, body: web::Json<request::UserChangePasswordReq>) -> impl Responder {
-    let result = controller::user::change_password(client, body.name.clone(), body.old_password.clone(), body.new_password.clone()).await;
-    match result {
-        true => {
-            generate_response(ResponseStatus::Success, Some(serde_json::json!(
-                {
-                    "well": "fk"
-                }
-            )), None)
-        }
-        false => {
-            generate_response(ResponseStatus::BadRequest, None, None)
-        }
-    }
 }
 
 
@@ -104,7 +49,8 @@ async fn main() -> std::io::Result<()> {
                         scope("/user")
                             .service(user_login)
                             .service(user_register)
-                            .service(user_change_password)
+                            .service(get_user_detail)
+                        // .service(user_change_password)
                     )
             )
     })
