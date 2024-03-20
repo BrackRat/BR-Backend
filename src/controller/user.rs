@@ -30,6 +30,7 @@ pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, na
                 .user()
                 .create(
                     utils::time_utils::get_local_timestamp(),
+                    utils::time_utils::get_local_timestamp(),
                     name,
                     hashed_password,
                     vec![],
@@ -56,6 +57,13 @@ pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name:
         }
         Some(user) => {
             if verify_password(password.as_str(), user.password.as_str()) {
+                // update last login time
+                client.user()
+                    .update(UniqueWhereParam::IdEquals(user.id), vec![user::lastlogin_unix_timestamp::set(utils::time_utils::get_local_timestamp())])
+                    .exec()
+                    .await
+                    .unwrap();
+
                 Some(generate_jwt(user.id, user.name))
             } else {
                 None

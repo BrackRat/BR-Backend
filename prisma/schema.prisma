@@ -9,8 +9,9 @@ generator client {
 }
 
 model User {
-  id                    Int    @id @unique @default(autoincrement())
-  registerUnixTimestamp BigInt
-  name                  String @unique
-  password              String
+  id                     Int    @id @unique @default(autoincrement())
+  registerUnixTimestamp  BigInt
+  lastloginUnixTimestamp BigInt
+  name                   String @unique
+  password               String
 }

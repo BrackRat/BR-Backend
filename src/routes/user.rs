@@ -69,7 +69,7 @@ pub(crate) async fn get_user_detail(client: web::Data<PrismaClient>) -> impl Res
             )), None)
         }
         None => {
-            generate_response(ResponseStatus::BadRequest, None, Some("Username or Password Wrong"))
+            generate_response(ResponseStatus::BadRequest, None, None)
         }
     }
 }
