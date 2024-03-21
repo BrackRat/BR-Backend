@@ -41,57 +41,36 @@ pub(crate) async fn user_login(client: web::Data<PrismaClient>, body: web::Json<
 }
 
 #[get("/me")]
-pub(crate) async fn get_user_detail(client: web::Data<PrismaClient>,user: UserData) -> impl Responder {
-    // format!("Welcome {}!", user.claims.name)
-    generate_response(ResponseStatus::Success, Some(serde_json::json!(
-        {"hello": user.id}
-    )),None)
-    // let token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTksIm5hbWUiOiLlr7nmjInmnKzov5norrAiLCJleHAiOjE3MTIyMTk2NTB9.6gtofIy7au8TmrKmFkg41nXif5MuCE6amp8Gtg7Bgek".to_string();
-    // let result = verify_jwt(token);
-    // let claims = match result {
-    //     None => {
-    //         return generate_response(ResponseStatus::Unauthorized, None, None);
-    //     }
-    //     Some(claims) => {
-    //         claims
-    //     }
-    // };
-
-    // dbg!(authority.to_string());
-    // verify_jwt(authority.to_string());
-
-    // let result = controller::user::get_user_detail_from_userid(client, claims.id).await;
-    // match result {
-    //     Some(user) => {
-    //         generate_response(ResponseStatus::Success, Some(serde_json::json!(
-    //             {
-    //                 "user": {
-    //                     "id": user.id,
-    //                     "name": user.name,
-    //                     "registerTime": user.register_unix_timestamp
-    //                 }
-    //             }
-    //         )), None)
-    //     }
-    //     None => {
-    //         generate_response(ResponseStatus::BadRequest, None, Some("Cannot find user"))
-    //     }
-    // }
+pub(crate) async fn get_user_detail(client: web::Data<PrismaClient>, user: UserData) -> impl Responder {
+    let result = controller::user::get_user_detail_from_userid(client, user.id).await;
+    match result {
+        Some(user) => {
+            generate_response(ResponseStatus::Success, Some(serde_json::json!(
+                {
+                    "user": {
+                        "id": user.id,
+                        "name": user.name,
+                        "registerTime": user.register_unix_timestamp,
+                        "lastLoginTime": user.lastlogin_unix_timestamp
+                    }
+                }
+            )), None)
+        }
+        None => {
+            generate_response(ResponseStatus::BadRequest, None, Some("Cannot find user"))
+        }
+    }
 }
 
-// #[post("/change_password")]
-// pub(crate) async fn user_change_password(client: web::Data<PrismaClient>, body: web::Json<request::UserChangePasswordReq>) -> impl Responder {
-//     let result = controller::user::change_password(client, body.name.clone(), body.old_password.clone(), body.new_password.clone()).await;
-//     match result {
-//         true => {
-//             generate_response(ResponseStatus::Success, Some(serde_json::json!(
-//                 {
-//                     "well": "fk"
-//                 }
-//             )), None)
-//         }
-//         false => {
-//             generate_response(ResponseStatus::BadRequest, None, None)
-//         }
-//     }
-// }
+#[post("/change_password")]
+pub(crate) async fn user_change_password(client: web::Data<PrismaClient>, body: web::Json<request::UserChangePasswordReq>, user: UserData) -> impl Responder {
+    let result = controller::user::change_password(client, user.id, body.old_password.clone(), body.new_password.clone()).await;
+    match result {
+        true => {
+            generate_response::<u8>(ResponseStatus::Success, None, None)
+        }
+        false => {
+            generate_response(ResponseStatus::BadRequest, None, None)
+        }
+    }
+}

@@ -54,7 +54,7 @@ async fn main() -> std::io::Result<()> {
                             .service(user_login)
                             .service(user_register)
                             .service(get_user_detail)
-                        // .service(user_change_password)
+                            .service(user_change_password)
                     )
             )
     })

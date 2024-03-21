@@ -15,7 +15,6 @@ pub(crate) struct UserLoginReq {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct UserChangePasswordReq {
-    pub(crate) name: String,
     pub(crate) old_password: String,
     pub(crate) new_password: String,
 }

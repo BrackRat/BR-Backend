@@ -72,10 +72,10 @@ pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name:
     };
 }
 
-pub(crate) async fn change_password(client: web::Data<crate::db::PrismaClient>, name: String, old_password: String, new_password: String) -> bool {
+pub(crate) async fn change_password(client: web::Data<crate::db::PrismaClient>, id: i32, old_password: String, new_password: String) -> bool {
     let user = client
         .user()
-        .find_first(vec![user::name::equals(name.clone())])
+        .find_first(vec![user::id::equals(id)])
         .exec()
         .await
         .unwrap();
