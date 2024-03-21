@@ -1,5 +1,4 @@
 use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
-// use serde::{Serialize, Deserialize};
 use serde_json;
 use actix_web::middleware::Logger;
 use actix_web::web::scope;
@@ -15,8 +14,8 @@ mod utils;
 mod controller;
 mod common;
 mod routes;
-use routes::user::*;
 
+use routes::user::*;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -27,12 +26,17 @@ async fn hello() -> impl Responder {
     HttpResponse::Ok().json(response)
 }
 
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let client = web::Data::new(PrismaClient::_builder().build().await.unwrap());
     let ip = "127.0.0.1";
     let port = 5050;
+
+    // ToDo
+    // common::jwt::verify_jwt(// String jwt here); -> Claims
+    // now i want to create a middleware to verify jwt which will be used in some routes
+    // for those routes, if jwt is valid, it will inject claims into request
+    // if jwt is not valid, it will return 401
 
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 

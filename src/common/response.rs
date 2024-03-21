@@ -5,6 +5,7 @@ use serde::Serialize;
 pub enum ResponseStatus {
     Success,
     BadRequest,
+    Unauthorized,
     NotFound,
     InternalServerError,
 }
@@ -14,6 +15,7 @@ pub fn generate_response<T>(status: ResponseStatus, data: Option<T>, custom_msg:
         ResponseStatus::Success => "OK",
         ResponseStatus::BadRequest => "Bad Request",
         ResponseStatus::NotFound => "Not Found",
+        ResponseStatus::Unauthorized => "Unauthorized",
         ResponseStatus::InternalServerError => "Internal Server Error",
     };
 
@@ -23,6 +25,7 @@ pub fn generate_response<T>(status: ResponseStatus, data: Option<T>, custom_msg:
         "code": match status {
             ResponseStatus::Success => 200,
             ResponseStatus::BadRequest => 400,
+            ResponseStatus::Unauthorized => 401,
             ResponseStatus::NotFound => 404,
             ResponseStatus::InternalServerError => 500,
         },
