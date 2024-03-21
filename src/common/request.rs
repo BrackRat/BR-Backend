@@ -18,3 +18,9 @@ pub(crate) struct UserChangePasswordReq {
     pub(crate) old_password: String,
     pub(crate) new_password: String,
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub(crate) struct PostCreateReq {
+    pub(crate) title: String,
+    pub(crate) content: Option<String>
+}

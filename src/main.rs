@@ -14,7 +14,7 @@ mod utils;
 mod controller;
 mod common;
 mod routes;
-
+use routes::post::*;
 use routes::user::*;
 
 #[get("/")]
@@ -48,7 +48,11 @@ async fn main() -> std::io::Result<()> {
                             .service(user_login)
                             .service(user_register)
                             .service(get_user_detail)
-                            .service(user_change_password)
+                            .service(user_change_password),
+                    )
+                    .service(
+                        scope("/post")
+                            .service(create_post)
                     )
             )
     })

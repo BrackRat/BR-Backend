@@ -14,4 +14,14 @@ model User {
   lastloginUnixTimestamp BigInt
   name                   String @unique
   password               String
+  posts                  Post[]
+}
+
+model Post {
+  id      String  @id @default(cuid())
+  title   String
+  content String?
+
+  User   User? @relation(fields: [userId], references: [id])
+  userId Int?
 }
