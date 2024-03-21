@@ -1,13 +1,13 @@
 use actix_web::{get, post, Responder, web};
 use crate::common::jwt::{Claims, verify_jwt};
-use crate::common::request;
+use crate::models::user::*;
 use crate::common::response::{generate_response, ResponseStatus};
 use crate::{controller};
 use crate::common::auth::UserData;
 use crate::db::PrismaClient;
 
 #[post("/register")]
-pub(crate) async fn user_register(client: web::Data<PrismaClient>, body: web::Json<request::UserRegisterReq>) -> impl Responder {
+pub(crate) async fn user_register(client: web::Data<PrismaClient>, body: web::Json<UserRegisterReq>) -> impl Responder {
     let result = controller::user::register_user(client, body.name.clone(), body.password.clone()).await;
     match result {
         Some(user) => {
@@ -24,7 +24,7 @@ pub(crate) async fn user_register(client: web::Data<PrismaClient>, body: web::Js
 }
 
 #[post("/login")]
-pub(crate) async fn user_login(client: web::Data<PrismaClient>, body: web::Json<request::UserLoginReq>) -> impl Responder {
+pub(crate) async fn user_login(client: web::Data<PrismaClient>, body: web::Json<UserLoginReq>) -> impl Responder {
     let result = controller::user::login_user(client, body.name.clone(), body.password.clone()).await;
     match result {
         Some(token) => {
@@ -63,7 +63,7 @@ pub(crate) async fn get_user_detail(client: web::Data<PrismaClient>, user: UserD
 }
 
 #[post("/change_password")]
-pub(crate) async fn user_change_password(client: web::Data<PrismaClient>, body: web::Json<request::UserChangePasswordReq>, user: UserData) -> impl Responder {
+pub(crate) async fn user_change_password(client: web::Data<PrismaClient>, body: web::Json<UserChangePasswordReq>, user: UserData) -> impl Responder {
     let result = controller::user::change_password(client, user.id, body.old_password.clone(), body.new_password.clone()).await;
     match result {
         true => {

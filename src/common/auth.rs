@@ -13,7 +13,6 @@ impl FromRequest for UserData {
     type Future = Ready<Result<Self, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _payload: &mut Payload) -> Self::Future {
-        println!("get UserData from request");
         ready({
             let auth = req.headers().get("Authorization");
             if let Some(val) = auth {

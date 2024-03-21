@@ -1,7 +1,6 @@
 use serde::{Serialize, Deserialize};
 use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
 use std::env;
-use std::fmt::format;
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub(crate) struct Claims {
@@ -29,9 +28,6 @@ pub(crate) fn generate_jwt(id: i32, name: String) -> String {
         exp: (chrono::Local::now() + chrono::Duration::days(EXP_DELTA)).timestamp() as usize,
     };
     let token = encode(&Header::default(), &my_claims, &EncodingKey::from_secret(jwt_screct.as_ref())).unwrap();
-    // jsonwebtoken::encode(&header, &claims, &EncodingKey::from_secret(JWT_SECRET))
-    //     .map(|s| format!("Bearer {}", s))
-    //     .unwrap()
     let bearer = format!("Bearer {}", token);
     bearer
 }

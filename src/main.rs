@@ -14,6 +14,8 @@ mod utils;
 mod controller;
 mod common;
 mod routes;
+mod models;
+
 use routes::post::*;
 use routes::user::*;
 
