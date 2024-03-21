@@ -1,3 +1,14 @@
-# CO2 BACKEND
+# [Rust] Actix-Web + JWT + Prisma 后端模板
 
-Rust + Actix + Prisma 的 CO2 & TVOC 检测数据的后端
+## 部署
+
+1. 生成 `db.rs`
+```bash
+cargo prisma generate
+cargo prisma db push
+```
+
+2. 编译后端
+```bash
+cargo build --release
+```
