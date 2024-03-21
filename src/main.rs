@@ -32,12 +32,6 @@ async fn main() -> std::io::Result<()> {
     let ip = "127.0.0.1";
     let port = 5050;
 
-    // ToDo
-    // common::jwt::verify_jwt(// String jwt here); -> Claims
-    // now i want to create a middleware to verify jwt which will be used in some routes
-    // for those routes, if jwt is valid, it will inject claims into request
-    // if jwt is not valid, it will return 401
-
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
     println!("Listening on {}:{}", ip, port);
