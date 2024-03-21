@@ -1,5 +1,4 @@
 use actix_web::{get, post, Responder, web};
-use crate::common::jwt::{Claims, verify_jwt};
 use crate::models::user::*;
 use crate::common::response::{generate_response, ResponseStatus};
 use crate::{controller};
