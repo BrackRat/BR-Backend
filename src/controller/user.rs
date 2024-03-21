@@ -64,7 +64,7 @@ pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name:
                     .await
                     .unwrap();
 
-                Some(generate_jwt(user.id, user.name))
+                Some(generate_jwt(user.id))
             } else {
                 None
             }

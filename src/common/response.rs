@@ -2,6 +2,7 @@ use actix_web::{HttpResponse, Responder};
 use serde::Serialize;
 
 #[derive(Serialize)]
+#[warn(dead_code)]
 pub enum ResponseStatus {
     Success,
     BadRequest,

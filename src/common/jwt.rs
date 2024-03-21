@@ -1,22 +1,29 @@
-use serde::{Serialize, Deserialize};
-use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, DecodingKey};
 use std::env;
+
+use chrono::Days;
+use jsonwebtoken::{Algorithm, decode, DecodingKey, encode, EncodingKey, Header, Validation};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub(crate) struct Claims {
     pub(crate) id: i32,
-    pub(crate) name: String,
     pub(crate) exp: usize,
 }
 
-const EXP_DELTA: i64 = 15i64;
+const EXP_DELTA: u64 = 15;
 
 fn check_expire(exp: usize) -> bool {
-    return exp > (chrono::Local::now() + chrono::Duration::days(EXP_DELTA)).timestamp() as usize;
+    let check = exp > exp_duration();
+    return check;
+}
+
+fn exp_duration() -> usize {
+    let exp_time = chrono::Local::now().checked_add_days(Days::new(EXP_DELTA)).unwrap().timestamp() as usize;
+    return exp_time;
 }
 
 
-pub(crate) fn generate_jwt(id: i32, name: String) -> String {
+pub(crate) fn generate_jwt(id: i32) -> String {
     let binding = env::var("JWT_SECRET")
         .expect("JWT_SECRET environment variable not found");
     let jwt_screct: &[u8] = binding
@@ -24,8 +31,7 @@ pub(crate) fn generate_jwt(id: i32, name: String) -> String {
 
     let my_claims = Claims {
         id,
-        name,
-        exp: (chrono::Local::now() + chrono::Duration::days(EXP_DELTA)).timestamp() as usize,
+        exp: exp_duration(),
     };
     let token = encode(&Header::default(), &my_claims, &EncodingKey::from_secret(jwt_screct.as_ref())).unwrap();
     let bearer = format!("Bearer {}", token);
