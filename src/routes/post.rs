@@ -6,7 +6,7 @@ use crate::controller;
 use crate::db::PrismaClient;
 
 #[post("/create")]
-pub(crate) async fn create_post(client: web::Data<PrismaClient>, body: web::Json<PostCreateReq>, user: UserData) -> impl Responder {
+pub async fn create_post(client: web::Data<PrismaClient>, body: web::Json<PostCreateReq>, user: UserData) -> impl Responder {
     let result = controller::post::create_post(client, body.title.clone(), &body.content, user.id).await;
     match result {
         Some(post) => {
@@ -23,7 +23,7 @@ pub(crate) async fn create_post(client: web::Data<PrismaClient>, body: web::Json
 }
 
 #[get("/{page}/{size}")]
-pub(crate) async fn get_posts(client: web::Data<PrismaClient>, page: web::Path<(i64, i64)>) -> impl Responder {
+pub async fn get_posts(client: web::Data<PrismaClient>, page: web::Path<(i64, i64)>) -> impl Responder {
     let result = controller::post::get_posts(client, page.0, page.1).await;
     generate_response(ResponseStatus::Success, Some(serde_json::json!(
         {

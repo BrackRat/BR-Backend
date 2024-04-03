@@ -31,7 +31,7 @@ async fn hello() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let client = web::Data::new(PrismaClient::_builder().build().await.unwrap());
-    let ip = "127.0.0.1";
+    let ip = "0.0.0.0";
     let port = 5050;
 
     env_logger::init_from_env(Env::default().default_filter_or("info"));

@@ -1,5 +1,5 @@
 [package]
-name = "co2_backend"
+name = "br_common_backend"
 version = "0.1.0"
 edition = "2021"
 

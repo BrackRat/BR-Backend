@@ -7,7 +7,7 @@ use crate::common::jwt::generate_jwt;
 use crate::db::user::UniqueWhereParam;
 
 
-pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<user::Data> {
+pub async fn register_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<user::Data> {
     let is_unique_username = client
         .user()
         .find_first(vec![user::name::equals(name.clone())])
@@ -43,7 +43,7 @@ pub(crate) async fn register_user(client: web::Data<crate::db::PrismaClient>, na
     };
 }
 
-pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<String> {
+pub async fn login_user(client: web::Data<crate::db::PrismaClient>, name: String, password: String) -> Option<String> {
     let user = client
         .user()
         .find_first(vec![user::name::equals(name.clone())])
@@ -72,7 +72,7 @@ pub(crate) async fn login_user(client: web::Data<crate::db::PrismaClient>, name:
     };
 }
 
-pub(crate) async fn change_password(client: web::Data<crate::db::PrismaClient>, id: i32, old_password: String, new_password: String) -> bool {
+pub async fn change_password(client: web::Data<crate::db::PrismaClient>, id: i32, old_password: String, new_password: String) -> bool {
     let user = client
         .user()
         .find_first(vec![user::id::equals(id)])
@@ -100,7 +100,7 @@ pub(crate) async fn change_password(client: web::Data<crate::db::PrismaClient>, 
     };
 }
 
-pub(crate) async fn get_user_detail_from_userid(client: web::Data<crate::db::PrismaClient>, id: i32) -> Option<user::Data> {
+pub async fn get_user_detail_from_userid(client: web::Data<crate::db::PrismaClient>, id: i32) -> Option<user::Data> {
     let user = client
         .user()
         .find_unique(user::id::equals(id))

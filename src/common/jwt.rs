@@ -5,9 +5,9 @@ use jsonwebtoken::{Algorithm, decode, DecodingKey, encode, EncodingKey, Header, 
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
-pub(crate) struct Claims {
-    pub(crate) id: i32,
-    pub(crate) exp: usize,
+pub struct Claims {
+    pub id: i32,
+    pub exp: usize,
 }
 
 const EXP_DELTA: u64 = 15;
@@ -23,7 +23,7 @@ fn exp_duration() -> usize {
 }
 
 
-pub(crate) fn generate_jwt(id: i32) -> String {
+pub fn generate_jwt(id: i32) -> String {
     let binding = env::var("JWT_SECRET")
         .expect("JWT_SECRET environment variable not found");
     let jwt_screct: &[u8] = binding
@@ -38,7 +38,7 @@ pub(crate) fn generate_jwt(id: i32) -> String {
     bearer
 }
 
-pub(crate) fn verify_jwt(token: String) -> Option<Claims> {
+pub fn verify_jwt(token: String) -> Option<Claims> {
     let binding = env::var("JWT_SECRET")
         .expect("JWT_SECRET environment variable not found");
     let jwt_screct: &[u8] = binding

@@ -1,20 +1,20 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct UserRegisterReq {
-    pub(crate) name: String,
-    pub(crate) password: String,
+pub struct UserRegisterReq {
+    pub name: String,
+    pub password: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct UserLoginReq {
-    pub(crate) name: String,
-    pub(crate) password: String,
+pub struct UserLoginReq {
+    pub name: String,
+    pub password: String,
 }
 
 
 #[derive(Debug, Serialize, Deserialize)]
-pub(crate) struct UserChangePasswordReq {
-    pub(crate) old_password: String,
-    pub(crate) new_password: String,
+pub struct UserChangePasswordReq {
+    pub old_password: String,
+    pub new_password: String,
 }
