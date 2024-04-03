@@ -53,6 +53,7 @@ async fn main() -> std::io::Result<()> {
                         scope("/post")
                             .service(post::get_posts)
                             .service(post::create_post)
+                            .service(post::get_post_detail)
                     )
             )
     })

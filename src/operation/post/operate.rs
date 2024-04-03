@@ -2,7 +2,7 @@ use actix_web::web::Data;
 use crate::common::response::ResponseStatus;
 use crate::prisma::{post, PrismaClient, user};
 use crate::operation::pagination::pagination::{PaginationReq, PaginationRes};
-use crate::operation::post::model::{Post, PostCreateReq, PostShortRes};
+use crate::operation::post::model::{Post, PostCreateReq, PostDetailRes, PostShortRes};
 use crate::operation::user::UserShortDetail;
 
 impl Post {
@@ -73,6 +73,47 @@ impl Post {
             }
             Err(_) => {
                 return Err(ResponseStatus::InternalServerError(Some("Cannot get posts")));
+            }
+        }
+    }
+
+    pub async fn get(prisma: Data<PrismaClient>, id: String) -> Result<PostDetailRes, ResponseStatus<'static>> {
+        let post = prisma
+            .post()
+            .find_unique(post::UniqueWhereParam::IdEquals(id))
+            .select(
+                post::select!({
+                    id
+                    title
+                    content
+                    user: select {
+                        id
+                        name
+                    }
+                })
+            )
+            .exec()
+            .await;
+
+        match post {
+            Ok(post) => {
+                if post.is_none() {
+                    return Err(ResponseStatus::NotFound(Some("Post not found")));
+                }
+                let post = post.unwrap();
+                let user = post.user.unwrap();
+                let author = UserShortDetail {
+                    id: user.id,
+                    name: user.name,
+                };
+                Ok(PostDetailRes {
+                    title: post.title,
+                    content: post.content,
+                    author,
+                })
+            }
+            Err(_) => {
+                return Err(ResponseStatus::InternalServerError(Some("Cannot get post")));
             }
         }
     }

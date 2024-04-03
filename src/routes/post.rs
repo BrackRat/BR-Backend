@@ -17,3 +17,9 @@ pub async fn get_posts(client: web::Data<PrismaClient>, page: web::Query<Paginat
     let result = Post::get_posts(client, page.into_inner()).await;
     response(result)
 }
+
+#[get("/get/{post_id}")]
+pub async fn get_post_detail(client: web::Data<PrismaClient>, post_id: web::Path<String>) -> impl Responder {
+    let result = Post::get(client, post_id.into_inner()).await;
+    response(result)
+}

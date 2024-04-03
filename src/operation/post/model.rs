@@ -26,7 +26,6 @@ pub struct PostShortRes {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PostDetailRes {
-    pub cuid: String,
     pub title: String,
     pub content: Option<String>,
     pub author: user::UserShortDetail
