@@ -1,7 +1,6 @@
 use actix_web::web::Data;
 use crate::common::response::ResponseStatus;
 use crate::prisma::{post, PrismaClient, user};
-use crate::operation::operation::ItemOperation;
 use crate::operation::pagination::pagination::{PaginationReq, PaginationRes};
 use crate::operation::post::model::{Post, PostCreateReq, PostDetailRes, PostShortRes};
 use crate::operation::user::UserShortDetail;
@@ -20,7 +19,7 @@ impl Post {
             .exec()
             .await;
         match post {
-            Ok(post) => {
+            Ok(_) => {
                 Ok(())
             }
             Err(_) => {
@@ -54,14 +53,17 @@ impl Post {
                     .exec()
                     .await
                     .unwrap();
-                let data = posts.into_iter().map(|p|
+                let data = posts.into_iter().map(|p| {
+                    let user = p.user.unwrap();
+                    let author = UserShortDetail {
+                        id: user.id,
+                        name: user.name,
+                    };
                     PostShortRes {
-                    cuid: p.id,
-                    title: p.title,
-                    author: UserShortDetail {
-                        id: p.user.unwrap().id,
-                        name: p.user.unwrap().name,
-                    },
+                        cuid: p.id,
+                        title: p.title,
+                        author,
+                    }
                 }).collect();
 
                 Ok(PaginationRes {

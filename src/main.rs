@@ -11,10 +11,8 @@ use prisma::*;
 
 // use prisma_client_rust::Direction;
 mod utils;
-mod controller;
 mod common;
 mod routes;
-mod models;
 mod operation;
 
 use routes::post::*;
