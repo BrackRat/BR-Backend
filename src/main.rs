@@ -15,6 +15,7 @@ mod controller;
 mod common;
 mod routes;
 mod models;
+mod operation;
 
 use routes::post::*;
 use routes::user::*;
@@ -35,8 +36,6 @@ async fn main() -> std::io::Result<()> {
     let port = 5050;
 
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-
-    println!("Listening on {}:{}", ip, port);
 
     HttpServer::new(move || {
         App::new()

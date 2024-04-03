@@ -573,6 +573,7 @@ dependencies = [
  "chrono",
  "env_logger",
  "jsonwebtoken",
+ "log",
  "prisma-client-rust",
  "serde",
  "serde_json",

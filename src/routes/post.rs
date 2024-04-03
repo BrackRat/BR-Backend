@@ -14,10 +14,10 @@ pub async fn create_post(client: web::Data<PrismaClient>, body: web::Json<PostCr
                 {
                     "postId": post.id
                 }
-            )), None)
+            )))
         }
         None => {
-            generate_response(ResponseStatus::BadRequest, None, None)
+            generate_response(ResponseStatus::BadRequest(None), None)
         }
     }
 }
@@ -30,5 +30,5 @@ pub async fn get_posts(client: web::Data<PrismaClient>, page: web::Path<(i64, i6
             "posts": result.0,
             "total": result.1
         }
-    )), None)
+    )))
 }
