@@ -5,9 +5,9 @@ use actix_web::web::scope;
 use env_logger::Env;
 
 #[allow(warnings, unused)]
-mod db;
+mod prisma;
 
-use db::*;
+use prisma::*;
 
 // use prisma_client_rust::Direction;
 mod utils;

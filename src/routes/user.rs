@@ -1,7 +1,7 @@
 use actix_web::{get, post, Responder, web};
 use crate::common::response::{response};
 use crate::common::auth::UserData;
-use crate::db::PrismaClient;
+use crate::prisma::PrismaClient;
 use crate::operation::operation::{ItemOperation};
 use crate::operation::pagination::pagination::PaginationReq;
 use crate::operation::user::model::{UserChangePasswordReq, UserGetDetailReq, UserLoginReq, UserRegisterReq};

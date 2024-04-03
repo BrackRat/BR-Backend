@@ -1,8 +1,8 @@
 use actix_web::web;
-use crate::db::{post};
-use crate::db::post::Data;
+use crate::prisma::{post};
+use crate::prisma::post::Data;
 
-pub async fn create_post(client: web::Data<crate::db::PrismaClient>, title: String, content: &Option<String>, user_id: i32) -> Option<post::Data> {
+pub async fn create_post(client: web::Data<crate::prisma::PrismaClient>, title: String, content: &Option<String>, user_id: i32) -> Option<post::Data> {
     let post = client
         .post()
         .create(
@@ -15,7 +15,7 @@ pub async fn create_post(client: web::Data<crate::db::PrismaClient>, title: Stri
     Some(post)
 }
 
-pub async fn get_posts(client: web::Data<crate::db::PrismaClient>, page: i64, size: i64) -> (Vec<Data>, i64) {
+pub async fn get_posts(client: web::Data<crate::prisma::PrismaClient>, page: i64, size: i64) -> (Vec<Data>, i64) {
     let skip = (page - 1) * size;
     let total = client
         .post()

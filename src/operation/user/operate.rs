@@ -1,11 +1,11 @@
 use actix_web::web;
 use crate::common::hash_password::{hash_password, verify_password};
 use crate::common::response::ResponseStatus;
-use crate::db::user;
+use crate::prisma::user;
 use crate::operation::operation::{ItemOperation};
 use crate::operation::pagination::pagination::{PaginationReq, PaginationRes};
 use crate::{common, utils};
-use crate::db::user::UniqueWhereParam;
+use crate::prisma::user::UniqueWhereParam;
 use super::model::{TokenRes, User, UserChangePasswordReq, UserGetDetailReq, UserLoginReq, UserRegisterReq, UserShortDetail};
 
 impl ItemOperation for User {
@@ -20,7 +20,7 @@ impl ItemOperation for User {
     type DeleteInput = String;
     type DeleteOutput = User;
 
-    async fn get_items(prisma: web::Data<crate::db::PrismaClient>,
+    async fn get_items(prisma: web::Data<crate::prisma::PrismaClient>,
                        page: Self::GetItemsInput) -> Result<Self::GetItemsOutput, ResponseStatus<'static>> {
         let users = prisma
             .user()
@@ -56,7 +56,7 @@ impl ItemOperation for User {
         };
     }
 
-    async fn get_detail(prisma: web::Data<crate::db::PrismaClient>,
+    async fn get_detail(prisma: web::Data<crate::prisma::PrismaClient>,
                         input: Self::GetDetailInput) -> Result<Self::GetDetailOutput, ResponseStatus<'static>> {
         let user = prisma
             .user()
@@ -79,12 +79,12 @@ impl ItemOperation for User {
         };
     }
 
-    async fn change(_: web::Data<crate::db::PrismaClient>,
+    async fn change(_: web::Data<crate::prisma::PrismaClient>,
                     _: Self::ChangeInput) -> Result<Self::ChangeOutput, ResponseStatus<'static>> {
         Err(ResponseStatus::InternalServerError(None))
     }
 
-    async fn create(prisma: web::Data<crate::db::PrismaClient>,
+    async fn create(prisma: web::Data<crate::prisma::PrismaClient>,
                     input: Self::CreateInput) -> Result<Self::CreateOutput, ResponseStatus<'static>> {
         let is_unique_username = prisma
             .user()
@@ -124,14 +124,14 @@ impl ItemOperation for User {
         };
     }
 
-    async fn delete(_: web::Data<crate::db::PrismaClient>,
+    async fn delete(_: web::Data<crate::prisma::PrismaClient>,
                     _: Self::DeleteInput) -> Result<Self::DeleteOutput, ResponseStatus<'static>> {
         Err(ResponseStatus::InternalServerError(None))
     }
 }
 
 impl User {
-    pub async fn login(prisma: web::Data<crate::db::PrismaClient>, input: UserLoginReq) -> Result<TokenRes, ResponseStatus<'static>> {
+    pub async fn login(prisma: web::Data<crate::prisma::PrismaClient>, input: UserLoginReq) -> Result<TokenRes, ResponseStatus<'static>> {
         let user = prisma
             .user()
             .find_unique(user::UniqueWhereParam::NameEquals(input.name.clone()))
@@ -155,7 +155,7 @@ impl User {
         };
     }
 
-    pub async fn change_password(prisma: web::Data<crate::db::PrismaClient>, user_id: i32, req: UserChangePasswordReq) -> Result<(), ResponseStatus<'static>> {
+    pub async fn change_password(prisma: web::Data<crate::prisma::PrismaClient>, user_id: i32, req: UserChangePasswordReq) -> Result<(), ResponseStatus<'static>> {
         let user = prisma
             .user()
             .find_first(vec![user::id::equals(user_id)])

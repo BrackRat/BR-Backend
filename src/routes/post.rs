@@ -3,7 +3,7 @@ use crate::common::auth::UserData;
 use crate::models::post::*;
 use crate::common::response::{generate_response, ResponseStatus};
 use crate::controller;
-use crate::db::PrismaClient;
+use crate::prisma::PrismaClient;
 
 #[post("/create")]
 pub async fn create_post(client: web::Data<PrismaClient>, body: web::Json<PostCreateReq>, user: UserData) -> impl Responder {
