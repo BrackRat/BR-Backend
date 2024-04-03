@@ -1,10 +1,14 @@
 use serde::{Deserialize, Serialize};
 
+// Base
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct User {
     pub name: String,
     pub last_login_time: String,
 }
+
+// Request
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserRegisterReq {
@@ -28,4 +32,17 @@ pub struct UserChangePasswordReq {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UserGetDetailReq {
     pub id: i32,
+}
+
+// Response
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserShortDetail {
+    pub id: i32,
+    pub name: String
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TokenRes {
+    pub token: String,
 }

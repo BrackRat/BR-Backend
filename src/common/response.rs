@@ -1,6 +1,7 @@
 use actix_web::{HttpResponse, Responder};
 use serde::Serialize;
 
+#[allow(unused)]
 #[derive(Serialize)]
 pub enum ResponseStatus<'a> {
     Success,

@@ -18,7 +18,7 @@ mod models;
 mod operation;
 
 use routes::post::*;
-use routes::user::*;
+use routes::user;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -46,10 +46,11 @@ async fn main() -> std::io::Result<()> {
                     .service(hello)
                     .service(
                         scope("/user")
-                            .service(user_login)
-                            .service(user_register)
-                            .service(get_user_detail)
-                            .service(user_change_password),
+                            .service(user::user_login)
+                            .service(user::user_register)
+                            .service(user::get_user_detail)
+                            .service(user::user_change_password)
+                            .service(user::get_users)
                     )
                     .service(
                         scope("/post")
