@@ -2,7 +2,7 @@ use actix_web::web::Data;
 use crate::common::response::ResponseStatus;
 use crate::prisma::{post, PrismaClient, user};
 use crate::operation::pagination::pagination::{PaginationReq, PaginationRes};
-use crate::operation::post::model::{Post, PostCreateReq, PostDetailRes, PostShortRes};
+use crate::operation::post::model::{Post, PostCreateReq, PostShortRes};
 use crate::operation::user::UserShortDetail;
 
 impl Post {

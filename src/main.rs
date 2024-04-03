@@ -9,13 +9,12 @@ mod prisma;
 
 use prisma::*;
 
-// use prisma_client_rust::Direction;
 mod utils;
 mod common;
 mod routes;
 mod operation;
 
-use routes::post::*;
+use routes::post;
 use routes::user;
 
 #[get("/")]
@@ -52,8 +51,8 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(
                         scope("/post")
-                            .service(get_posts)
-                            .service(create_post)
+                            .service(post::get_posts)
+                            .service(post::create_post)
                     )
             )
     })
