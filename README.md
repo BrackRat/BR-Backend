@@ -2,7 +2,7 @@
 
 ## 部署
 
-1. 生成 `db.rs`
+1. 生成 `prisma.rs`
 ```bash
 cargo prisma generate
 cargo prisma db push
