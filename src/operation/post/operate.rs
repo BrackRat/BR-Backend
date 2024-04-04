@@ -1,12 +1,13 @@
 use actix_web::web::Data;
+use crate::{generate_update_params};
 use crate::common::response::ResponseStatus;
 use crate::prisma::{post, PrismaClient, user};
 use crate::operation::pagination::pagination::{PaginationReq, PaginationRes};
-use crate::operation::post::model::{Post, PostCreateReq, PostDetailRes, PostShortRes};
+use crate::operation::post::model::{Post, PostCreateReq, PostCreateRes, PostDetailRes, PostEditReq, PostShortRes};
 use crate::operation::user::UserShortDetail;
 
 impl Post {
-    pub async fn create(prisma: Data<PrismaClient>, input: PostCreateReq, user_id: i32) -> Result<(), ResponseStatus<'static>> {
+    pub async fn create(prisma: Data<PrismaClient>, input: PostCreateReq, user_id: i32) -> Result<PostCreateRes, ResponseStatus<'static>> {
         let post = prisma
             .post()
             .create(
@@ -19,8 +20,10 @@ impl Post {
             .exec()
             .await;
         match post {
-            Ok(_) => {
-                Ok(())
+            Ok(post) => {
+                Ok(PostCreateRes {
+                    cuid: post.id
+                })
             }
             Err(_) => {
                 Err(ResponseStatus::InternalServerError(Some("Cannot create post")))
@@ -117,4 +120,85 @@ impl Post {
             }
         }
     }
+
+    async fn post_own_user(prisma: Data<PrismaClient>, id: String, user_id: i32) -> bool {
+        let post = prisma
+            .post()
+            .find_unique(post::UniqueWhereParam::IdEquals(id.clone()))
+            .select(
+                post::select!({
+                    user: select {
+                        id
+                    }
+                })
+            )
+            .exec()
+            .await;
+
+        match post {
+            Ok(post) => {
+                let post = post.unwrap();
+                if post.user.unwrap().id == user_id {
+                    return true;
+                }
+                false
+            }
+            Err(_) => {
+                false
+            }
+        }
+    }
+
+    pub async fn delete(prisma: Data<PrismaClient>, id: String, user_id: i32) -> Result<(), ResponseStatus<'static>> {
+        if !Self::post_own_user(prisma.clone(), id.clone(), user_id).await {
+            return Err(ResponseStatus::BadRequest(Some("You are not the author of the post")));
+        }
+
+        let post = prisma
+            .post()
+            .delete(post::UniqueWhereParam::IdEquals(id))
+            .exec()
+            .await;
+        match post {
+            Ok(_) => {
+                Ok(())
+            }
+            Err(_) => {
+                Err(ResponseStatus::InternalServerError(Some("Cannot delete post")))
+            }
+        }
+    }
+
+
+    pub async fn put(prisma: Data<PrismaClient>, id: String, input: PostEditReq, user_id: i32) -> Result<(), ResponseStatus<'static>> {
+        if !Self::post_own_user(prisma.clone(), id.clone(), user_id).await {
+            return Err(ResponseStatus::BadRequest(Some("You are not the author of the post")));
+        }
+
+        let mut update_params = vec![];
+
+        generate_update_params!(post, update_params;
+            SetTitle: input.title,
+            SetContent: Some(input.content),
+        );
+
+        let post = prisma
+            .post()
+            .update(
+                post::UniqueWhereParam::IdEquals(id),
+                update_params,
+            )
+            .exec()
+            .await;
+        match post {
+            Ok(_) => {
+                Ok(())
+            }
+            Err(_) => {
+                Err(ResponseStatus::InternalServerError(Some("Cannot update post")))
+            }
+        }
+    }
 }
+
+

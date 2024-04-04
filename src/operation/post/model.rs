@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 use crate::operation::user;
-
 // Base
 pub struct Post {
     pub id: String,
@@ -16,7 +15,18 @@ pub struct PostCreateReq {
     pub content: Option<String>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PostEditReq {
+    pub title: Option<String>,
+    pub content: Option<String>,
+}
+
 // Response
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PostCreateRes {
+    pub cuid: String,
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PostShortRes {
     pub cuid: String,

@@ -30,6 +30,12 @@ pub struct UserChangePasswordReq {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct UserChangeDetailReq {
+    pub name: Option<String>,
+    pub desc: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct UserGetDetailReq {
     pub id: i32,
 }

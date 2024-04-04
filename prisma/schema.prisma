@@ -9,12 +9,13 @@ generator client {
 }
 
 model User {
-  id                     Int    @id @unique @default(autoincrement())
+  id                     Int     @id @unique @default(autoincrement())
   registerUnixTimestamp  BigInt
   lastloginUnixTimestamp BigInt
-  name                   String @unique
+  name                   String  @unique
   password               String
   posts                  Post[]
+  desc                   String?
 }
 
 model Post {

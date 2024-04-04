@@ -13,6 +13,7 @@ mod utils;
 mod common;
 mod routes;
 mod operation;
+mod db_macro;
 
 use routes::post;
 use routes::user;
@@ -48,12 +49,15 @@ async fn main() -> std::io::Result<()> {
                             .service(user::get_user_detail)
                             .service(user::user_change_password)
                             .service(user::get_users)
+                            .service(user::change_user_detail)
                     )
                     .service(
                         scope("/post")
                             .service(post::get_posts)
                             .service(post::create_post)
                             .service(post::get_post_detail)
+                            .service(post::delete_post)
+                            .service(post::edit_post)
                     )
             )
     })

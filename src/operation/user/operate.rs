@@ -4,7 +4,8 @@ use crate::common::response::ResponseStatus;
 use crate::prisma::user;
 use crate::operation::operation::{ItemOperation};
 use crate::operation::pagination::pagination::{PaginationReq, PaginationRes};
-use crate::{common, utils};
+use crate::{common, generate_update_params, utils};
+use crate::operation::user::UserChangeDetailReq;
 use crate::prisma::user::UniqueWhereParam;
 use super::model::{TokenRes, User, UserChangePasswordReq, UserGetDetailReq, UserLoginReq, UserRegisterReq, UserShortDetail};
 
@@ -183,6 +184,27 @@ impl User {
                 }
                 Err(ResponseStatus::BadRequest(Some("No permission")))
             }
+        };
+    }
+
+    pub async fn change_detail(prisma: web::Data<crate::prisma::PrismaClient>, input: UserChangeDetailReq, user_id:i32) -> Result<(), ResponseStatus<'static>> {
+        let mut update_params = vec![];
+
+        generate_update_params!(user,update_params;
+            SetName: input.name,
+            SetDesc: Some(input.desc),
+        );
+
+        let r = prisma
+            .user()
+            .update(UniqueWhereParam::IdEquals(user_id), update_params)
+            .exec()
+            .await;
+
+        return if r.is_ok() {
+            Ok(())
+        } else {
+            Err(ResponseStatus::InternalServerError(Some("Cannot change detail")))
         };
     }
 }
