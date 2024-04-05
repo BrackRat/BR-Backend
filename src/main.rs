@@ -3,6 +3,7 @@ use serde_json;
 use actix_web::middleware::Logger;
 use actix_web::web::scope;
 use env_logger::Env;
+use redis;
 
 #[allow(warnings, unused)]
 mod prisma;
@@ -30,6 +31,8 @@ async fn hello() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let client = web::Data::new(PrismaClient::_builder().build().await.unwrap());
+    let redis_client = web::Data::new(redis::Client::open("redis://127.0.0.1/").unwrap());
+
     let ip = "0.0.0.0";
     let port = 5050;
 
@@ -39,6 +42,7 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(Logger::default())
             .app_data(client.clone())
+            .app_data(redis_client.clone())
             .service(
                 scope("/api")
                     .service(hello)

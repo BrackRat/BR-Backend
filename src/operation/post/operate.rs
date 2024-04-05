@@ -80,7 +80,24 @@ impl Post {
         }
     }
 
-    pub async fn get(prisma: Data<PrismaClient>, id: String) -> Result<PostDetailRes, ResponseStatus<'static>> {
+    pub async fn get(prisma: Data<PrismaClient>, redis_client: Data<redis::Client>, id: String) -> Result<PostDetailRes, ResponseStatus<'static>> {
+        let mut conn = redis_client.get_multiplexed_async_connection().await.unwrap();
+        let cache_key = format!("post:{}", id);
+
+        // check cache
+        let cached_post: Option<String> = redis::cmd("GET")
+            .arg(&cache_key)
+            .query_async(&mut conn)
+            .await
+            .unwrap_or(None);
+
+        if let Some(post) = cached_post {
+            // dbg!("cache hit");
+            let post: PostDetailRes = serde_json::from_str(&post).unwrap();
+            return Ok(post);
+        }
+
+
         let post = prisma
             .post()
             .find_unique(post::UniqueWhereParam::IdEquals(id))
@@ -109,11 +126,24 @@ impl Post {
                     id: user.id,
                     name: user.name,
                 };
-                Ok(PostDetailRes {
+
+                let post = PostDetailRes {
                     title: post.title,
                     content: post.content,
                     author,
-                })
+                };
+
+                // set cache
+                let post_json = serde_json::to_string(&post).unwrap();
+                let _: () = redis::cmd("SET")
+                    .arg(&cache_key)
+                    .arg(&post_json)
+                    .query_async(&mut conn)
+                    .await
+                    .unwrap();
+                // dbg!("cache set");
+
+                Ok(post)
             }
             Err(_) => {
                 return Err(ResponseStatus::InternalServerError(Some("Cannot get post")));

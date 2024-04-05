@@ -1,4 +1,5 @@
 use actix_web::{get, post, delete, put, Responder, web};
+use actix_web::web::Data;
 use crate::prisma::PrismaClient;
 use crate::common::auth::UserData;
 use crate::common::response::{response};
@@ -19,8 +20,8 @@ pub async fn get_posts(client: web::Data<PrismaClient>, page: web::Query<Paginat
 }
 
 #[get("/{post_id}")]
-pub async fn get_post_detail(client: web::Data<PrismaClient>, post_id: web::Path<String>) -> impl Responder {
-    let result = Post::get(client, post_id.into_inner()).await;
+pub async fn get_post_detail(client: web::Data<PrismaClient>, redis_client: Data<redis::Client>, post_id: web::Path<String>) -> impl Responder {
+    let result = Post::get(client, redis_client, post_id.into_inner()).await;
     response(result)
 }
 
