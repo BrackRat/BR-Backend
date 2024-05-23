@@ -12,8 +12,13 @@ pub struct Claims {
 
 const EXP_DELTA: u64 = 15;
 
+fn now_time_stamp() -> usize {
+    let now = chrono::Local::now().timestamp() as usize;
+    return now;
+}
+
 fn check_expire(exp: usize) -> bool {
-    let check = exp > exp_duration();
+    let check = exp <= now_time_stamp();
     return check;
 }
 
